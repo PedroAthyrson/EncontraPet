@@ -14,9 +14,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
 @RequestMapping("/auth")
+@Tag(name = "Autenticação", description = "Endpoint para realizar o login e obter o token de acesso.")
 public class AutenticacaoController {
 
     @Autowired
@@ -26,6 +29,7 @@ public class AutenticacaoController {
     private TokenService tokenService;
 
     @PostMapping("/login")
+    @Operation(summary = "Realiza o login do usuário", description = "Autentica o usuário com base no e-mail e senha e retorna um token JWT.")
     public ResponseEntity<TokenDTO> login(@RequestBody @Valid LoginDTO dados) {
         var authenticationToken = new UsernamePasswordAuthenticationToken(dados.email(), dados.senha());
         Authentication authentication = manager.authenticate(authenticationToken);
