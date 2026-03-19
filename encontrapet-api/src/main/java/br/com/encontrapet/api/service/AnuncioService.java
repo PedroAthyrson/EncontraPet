@@ -31,6 +31,8 @@ public class AnuncioService {
         novoAnuncio.setStatus(dados.status());
         novoAnuncio.setCidade(dados.cidade());
         novoAnuncio.setEstado(dados.estado());
+        novoAnuncio.setLatitude(dados.latitude());
+        novoAnuncio.setLongitude(dados.longitude());
         novoAnuncio.setUsuario(usuarioLogado);
 
         if (dados.status() == StatusAnuncio.PERDIDO) {
@@ -95,6 +97,8 @@ public class AnuncioService {
         anuncio.setCidade(dados.cidade());
         anuncio.setEstado(dados.estado());
         anuncio.setStatus(dados.status());
+        anuncio.setLatitude(dados.latitude());
+        anuncio.setLongitude(dados.longitude());
 
         if (anuncio.getStatus() == StatusAnuncio.ENCONTRADO) {
             anuncio.setAnimalEncontradoDescricao(dados.animalEncontradoDescricao());

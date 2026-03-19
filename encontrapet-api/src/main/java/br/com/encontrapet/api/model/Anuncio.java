@@ -34,6 +34,8 @@ public class Anuncio {
 
     @Column(nullable = false)
     private String estado;
+    private Double latitude;
+    private Double longitude;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_usuario", nullable = false)

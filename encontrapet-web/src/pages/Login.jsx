@@ -17,7 +17,6 @@ export default function Login() {
         setErro('');
 
         try {
-            // Fazendo o POST para a sua API!
             const resposta = await api.post('/auth/login', credentials);
             
             const token = resposta.data.token; 

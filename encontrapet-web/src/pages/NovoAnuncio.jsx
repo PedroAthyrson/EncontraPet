@@ -2,13 +2,14 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AlertCircle, CheckCircle2, MapPin, AlignLeft, Camera, PawPrint, Tag } from 'lucide-react';
 import api from '../services/api';
+import MapaSelecao from '../components/MapaSelecao';
 
 export default function NovoAnuncio() {
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
     const [erro, setErro] = useState('');
 
-    const [statusA, setStatusA] = useState('PERDIDO'); // PERDIDO ou ENCONTRADO
+    const [statusA, setStatusA] = useState('PERDIDO');
 
     const [anuncioData, setAnuncioData] = useState({
         titulo: '',
@@ -16,7 +17,9 @@ export default function NovoAnuncio() {
         cidade: '',
         estado: '',
         animalEncontradoDescricao: '',
-        animalEncontradoFotoUrl: ''
+        animalEncontradoFotoUrl: '',
+        latitude: null,
+        longitude: null
     });
 
     const [meusPets, setMeusPets] = useState([]);
@@ -56,7 +59,6 @@ export default function NovoAnuncio() {
 
             if (statusA === 'PERDIDO') {
                 if (precisaCadastrarPet) {
-                    // Cria o pet no banco antes de criar o anúncio
                     const petResponse = await api.post('/animais', petData);
                     idAnimalFinal = petResponse.data.id;
                 } else {
@@ -70,6 +72,8 @@ export default function NovoAnuncio() {
                 status: statusA,
                 cidade: anuncioData.cidade,
                 estado: anuncioData.estado,
+                latitude: anuncioData.latitude,
+                longitude: anuncioData.longitude,
                 idAnimal: statusA === 'PERDIDO' ? idAnimalFinal : null,
                 animalEncontradoDescricao: statusA === 'ENCONTRADO' ? anuncioData.animalEncontradoDescricao : null,
                 animalEncontradoFotoUrl: statusA === 'ENCONTRADO' ? anuncioData.animalEncontradoFotoUrl : null,
@@ -154,6 +158,20 @@ export default function NovoAnuncio() {
                                     <textarea name="descricaoEvento" required value={anuncioData.descricaoEvento} onChange={handleAnuncioChange} rows="3" placeholder="Onde foi visto por último? Tem coleira? É dócil?" className="w-full pl-11 pr-4 py-3 rounded-xl bg-gray-50 border border-gray-200 focus:bg-white focus:ring-2 focus:ring-indigo-400 outline-none transition resize-none"></textarea>
                                 </div>
                             </div>
+                        </div>
+
+                        {/* O MAPA ENTRA AQUI */}
+                        <div className="pt-2">
+                            <label className="block text-sm font-semibold text-gray-600 mb-1">Localização Exata no Mapa *</label>
+                            <p className="text-xs text-gray-500 mb-3">Navegue pelo mapa e clique no local exato para adicionar um pino de localização.</p>
+
+                            <MapaSelecao
+                                onLocationSelect={(lat, lng) => setAnuncioData({ ...anuncioData, latitude: lat, longitude: lng })}
+                            />
+
+                            {!anuncioData.latitude && (
+                                <p className="text-xs text-red-500 mt-2 font-medium">Por favor, clique no mapa para marcar a localização.</p>
+                            )}
                         </div>
 
                         {/* SEÇÃO DINÂMICA: PERDIDO */}
