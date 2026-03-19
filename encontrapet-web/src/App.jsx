@@ -1,17 +1,16 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import Login from './pages/Login';
 import Cadastro from './pages/Cadastro';
+import Feed from './pages/Feed'; // <--- Nova importação
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
-        {/* redireciona a raiz "/" diretamente para o "/login" */}
         <Route path="/" element={<Navigate to="/login" replace />} />
-        
-        {/* rotas principais */}
         <Route path="/login" element={<Login />} />
         <Route path="/cadastro" element={<Cadastro />} />
+        <Route path="/feed" element={<Feed />} />
       </Routes>
     </BrowserRouter>
   );

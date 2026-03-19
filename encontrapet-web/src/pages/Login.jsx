@@ -25,6 +25,7 @@ export default function Login() {
             localStorage.setItem('token', token);
             
             alert('Login realizado com sucesso!');
+            navigate('/feed');
 
         } catch (error) {
             console.error("Erro no login", error);

@@ -19,7 +19,7 @@ public class SecurityConfigurations {
     @Autowired
     private SecurityFilter securityFilter;
 
-    @Bean
+@Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
                 .cors(org.springframework.security.config.Customizer.withDefaults())
@@ -29,6 +29,8 @@ public class SecurityConfigurations {
                     req.requestMatchers("/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**").permitAll();
                     req.requestMatchers(HttpMethod.POST, "/auth/login").permitAll();
                     req.requestMatchers(HttpMethod.POST, "/usuarios").permitAll();
+                    req.requestMatchers(HttpMethod.GET, "/anuncios").permitAll();
+                    req.requestMatchers(HttpMethod.GET, "/anuncios/**").permitAll();
                     req.anyRequest().authenticated();
                 })
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
