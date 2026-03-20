@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Search, MapPin, Calendar, Info, MessageCircle, Plus, LogOut, Filter } from 'lucide-react';
+import { Search, MapPin, Calendar, Info, MessageCircle, Plus, LogOut, Filter, Map } from 'lucide-react';
 import api from '../services/api';
+import MapaFeed from '../components/MapaFeed';
 
 export default function Feed() {
     const [anuncios, setAnuncios] = useState([]);
@@ -76,72 +77,83 @@ export default function Feed() {
                 </div>
             </header>
 
-            {/* CONTEÚDO PRINCIPAL - GRID DE CARDS */}
-            <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8">
+            {/* CONTEÚDO PRINCIPAL - DIVIDIDO EM DUAS COLUNAS NO DESKTOP */}
+            <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8 pb-12">
+                <div className="flex flex-col-reverse lg:flex-row gap-8">
 
-                {loading ? (
-                    <div className="flex justify-center items-center h-64">
-                        <p className="text-xl text-gray-500 font-semibold animate-pulse">Buscando pets...</p>
-                    </div>
-                ) : anuncios.length === 0 ? (
-                    <div className="text-center mt-20 text-gray-500">
-                        <p className="text-2xl font-bold">Nenhum pet encontrado.</p>
-                        <p className="mt-2">Seja o primeiro a criar um anúncio!</p>
-                    </div>
-                ) : (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                    {/* COLUNA ESQUERDA: GRID DE CARDS (Ocupa o espaço restante) */}
+                    <div className="flex-1">
+                        <h2 className="text-2xl font-bold text-gray-800 mb-6 border-b pb-2">Últimos Registros</h2>
 
-                        {anuncios.map((ad) => {
-                            // Lógica para diferenciar Perdido de Encontrado conforme sua API
-                            const isPerdido = ad.status === 'PERDIDO';
-                            const nome = isPerdido ? ad.animal?.nome : ad.titulo;
-                            const racaEspecie = isPerdido ? `${ad.animal?.especie} • ${ad.animal?.raca}` : 'Animal Encontrado';
-                            const foto = isPerdido ? ad.animal?.fotoUrl : ad.animalEncontradoFotoUrl;
-                            const caracteristica = isPerdido ? ad.animal?.cor : ad.animalEncontradoDescricao;
-                            // Formatar data
-                            const dataFormatada = new Date(ad.dataCriacao).toLocaleDateString('pt-BR', { day: '2-digit', month: 'long' });
+                        {loading ? (
+                            <div className="flex justify-center items-center h-64">
+                                <p className="text-xl text-gray-500 font-semibold animate-pulse">Buscando pets...</p>
+                            </div>
+                        ) : anuncios.length === 0 ? (
+                            <div className="text-center mt-20 text-gray-500 bg-white p-10 rounded-3xl shadow-sm border border-gray-100">
+                                <p className="text-2xl font-bold">Nenhum pet encontrado.</p>
+                                <p className="mt-2">Seja o primeiro a criar um anúncio!</p>
+                            </div>
+                        ) : (
+                            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
+                                {anuncios.map((ad) => {
+                                    const isPerdido = ad.status === 'PERDIDO';
+                                    const nome = isPerdido ? ad.animal?.nome : ad.titulo;
+                                    const racaEspecie = isPerdido ? `${ad.animal?.especie} • ${ad.animal?.raca}` : 'Animal Encontrado';
+                                    const foto = isPerdido ? ad.animal?.fotoUrl : ad.animalEncontradoFotoUrl;
+                                    const caracteristica = isPerdido ? ad.animal?.cor : ad.animalEncontradoDescricao;
+                                    const dataFormatada = new Date(ad.dataCriacao).toLocaleDateString('pt-BR', { day: '2-digit', month: 'long' });
 
-                            return (
-                                <div key={ad.id} className="bg-white rounded-2xl shadow-sm hover:shadow-xl transition-shadow duration-300 overflow-hidden border border-gray-100 flex flex-col">
-
-                                    {/* Imagem do Pet */}
-                                    <div className="relative h-56 w-full bg-gray-200">
-                                        {foto ? (
-                                            <img src={foto} alt={nome} className="w-full h-full object-cover" />
-                                        ) : (
-                                            <div className="w-full h-full flex items-center justify-center text-gray-400">Sem foto</div>
-                                        )}
-
-                                        {/* Tag de Status */}
-                                        <span className={`absolute top-3 left-3 px-3 py-1 text-xs font-bold rounded-full shadow-sm text-white ${isPerdido ? 'bg-red-500' : 'bg-emerald-500'}`}>
-                                            {isPerdido ? 'Perdido' : 'Encontrado'}
-                                        </span>
-                                    </div>
-
-                                    {/* Informações */}
-                                    <div className="p-5 flex-1 flex flex-col">
-                                        <h3 className="text-xl font-bold text-gray-900 truncate">{nome}</h3>
-                                        <p className="text-sm text-gray-500 font-medium mb-3">{racaEspecie}</p>
-
-                                        <div className="space-y-2 text-sm text-gray-600 mb-4 flex-1">
-                                            <p className="flex items-center"><MapPin size={16} className="mr-2 text-indigo-400 flex-shrink-0" /> <span className="truncate">{ad.cidade} - {ad.estado}</span></p>
-                                            <p className="flex items-center"><Calendar size={16} className="mr-2 text-indigo-400 flex-shrink-0" /> {dataFormatada}</p>
-                                            {caracteristica && (
-                                                <p className="flex items-center"><Info size={16} className="mr-2 text-indigo-400 flex-shrink-0" /> <span className="truncate">{caracteristica}</span></p>
-                                            )}
+                                    return (
+                                        <div key={ad.id} className="bg-white rounded-2xl shadow-sm hover:shadow-xl transition-shadow duration-300 overflow-hidden border border-gray-100 flex flex-col">
+                                            <div className="relative h-48 w-full bg-gray-200">
+                                                {foto ? (
+                                                    <img src={foto} alt={nome} className="w-full h-full object-cover" />
+                                                ) : (
+                                                    <div className="w-full h-full flex items-center justify-center text-gray-400">Sem foto</div>
+                                                )}
+                                                <span className={`absolute top-3 left-3 px-3 py-1 text-xs font-bold rounded-full shadow-sm text-white ${isPerdido ? 'bg-red-500' : 'bg-emerald-500'}`}>
+                                                    {isPerdido ? 'Perdido' : 'Encontrado'}
+                                                </span>
+                                            </div>
+                                            <div className="p-4 flex-1 flex flex-col">
+                                                <h3 className="text-lg font-bold text-gray-900 truncate">{nome}</h3>
+                                                <p className="text-xs text-gray-500 font-medium mb-3">{racaEspecie}</p>
+                                                <div className="space-y-1.5 text-xs text-gray-600 mb-4 flex-1">
+                                                    <p className="flex items-center"><MapPin size={14} className="mr-2 text-indigo-400 flex-shrink-0" /> <span className="truncate">{ad.cidade} - {ad.estado}</span></p>
+                                                    <p className="flex items-center"><Calendar size={14} className="mr-2 text-indigo-400 flex-shrink-0" /> {dataFormatada}</p>
+                                                    {caracteristica && (
+                                                        <p className="flex items-center"><Info size={14} className="mr-2 text-indigo-400 flex-shrink-0" /> <span className="truncate">{caracteristica}</span></p>
+                                                    )}
+                                                </div>
+                                                <button className="w-full mt-auto bg-green-500 hover:bg-green-600 text-white py-2 rounded-xl font-bold transition flex justify-center items-center text-sm">
+                                                    <MessageCircle size={16} className="mr-2" />
+                                                    Informações
+                                                </button>
+                                            </div>
                                         </div>
-
-                                        {/* Botão de Contato */}
-                                        <button className="w-full mt-auto bg-green-500 hover:bg-green-600 text-white py-2.5 rounded-xl font-bold transition flex justify-center items-center">
-                                            <MessageCircle size={18} className="mr-2" />
-                                            Tenho Informações
-                                        </button>
-                                    </div>
-                                </div>
-                            );
-                        })}
+                                    );
+                                })}
+                            </div>
+                        )}
                     </div>
-                )}
+
+                    {/* COLUNA DIREITA: MAPA FIXO (Sticky) */}
+                    <div className="lg:w-1/3 xl:w-[400px]">
+                        {/* O "sticky top-24" faz o mapa descer acompanhando o scroll da tela */}
+                        <div className="sticky top-24 bg-white p-4 rounded-3xl shadow-sm border border-gray-100">
+                            <h2 className="text-lg font-bold text-gray-800 flex items-center mb-3">
+                                <Map className="mr-2 text-indigo-500" size={20} /> Mapa Interativo
+                            </h2>
+                            {/* Definimos a altura do mapa aqui */}
+                            <div className="h-[450px] rounded-xl overflow-hidden relative z-0">
+                                <MapaFeed anuncios={anuncios} />
+                            </div>
+                            <p className="text-xs text-gray-400 mt-3 text-center">Clique nos marcadores para ver os detalhes</p>
+                        </div>
+                    </div>
+
+                </div>
             </main>
         </div>
     );

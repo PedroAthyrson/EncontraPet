@@ -7,9 +7,12 @@ const api = axios.create({
 api.interceptors.request.use((config) => {
     const token = localStorage.getItem('token');
 
-    if (token) {
+    const isRotaPublica = config.url.includes('/auth/login') || config.url.includes('/usuarios');
+
+    if (token && !isRotaPublica) {
         config.headers.Authorization = `Bearer ${token}`;
     }
+
     return config;
 });
 
