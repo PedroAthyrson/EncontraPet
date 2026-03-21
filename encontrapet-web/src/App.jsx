@@ -3,6 +3,7 @@ import Login from './pages/Login';
 import Cadastro from './pages/Cadastro';
 import Feed from './pages/Feed';
 import NovoAnuncio from './pages/NovoAnuncio';
+import AnuncioDetalhes from './pages/AnuncioDetalhes';
 
 // Criamos um componente que atua como "Guarda Costas" das rotas
 const RotaProtegida = ({ children }) => {
@@ -18,6 +19,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/cadastro" element={<Cadastro />} />
         <Route path="/feed" element={<Feed />} />
+        <Route path="/anuncio/:id" element={<AnuncioDetalhes />} />
 
         <Route 
           path="/novo-anuncio" 
