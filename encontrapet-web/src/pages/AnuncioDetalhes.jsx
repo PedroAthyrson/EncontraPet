@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { ArrowLeft, MapPin, Calendar, Info, Send, User } from 'lucide-react';
+import { ArrowLeft, MapPin, Calendar, Info, Send, User, Trash2 } from 'lucide-react';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import L from 'leaflet';
 import api from '../services/api';
@@ -18,12 +18,11 @@ const greenIcon = new L.Icon({
 });
 
 export default function AnuncioDetalhes() {
-    const { id } = useParams(); // Pega o ID da URL
+    const { id } = useParams();
     const navigate = useNavigate();
     const [anuncio, setAnuncio] = useState(null);
     const [loading, setLoading] = useState(true);
 
-    // Estados para os comentários
     const [comentarios, setComentarios] = useState([]);
     const [novoComentario, setNovoComentario] = useState('');
     const [enviando, setEnviando] = useState(false);
@@ -71,6 +70,21 @@ export default function AnuncioDetalhes() {
         }
     };
 
+    const handleExcluirAnuncio = async () => {
+        const confirmacao = window.confirm("Tem certeza que deseja excluir este anúncio? Esta ação não pode ser desfeita.");
+
+        if (confirmacao) {
+            try {
+                await api.delete(`/anuncios/${id}`);
+                alert("Anúncio excluído com sucesso!");
+                navigate('/feed');
+            } catch (error) {
+                console.error("Erro ao excluir:", error);
+                alert("Erro: Você não tem permissão para excluir este anúncio ou ele não existe mais.");
+            }
+        }
+    };
+
     if (loading) return <div className="min-h-screen flex justify-center items-center"><p className="text-xl text-gray-500 animate-pulse">Carregando detalhes...</p></div>;
     if (!anuncio) return null;
 
@@ -112,7 +126,20 @@ export default function AnuncioDetalhes() {
                             </div>
 
                             <div className="p-8">
-                                <h1 className="text-3xl font-bold text-gray-900 mb-2">{nome}</h1>
+                                <div className="flex justify-between items-start mb-2">
+                                    <h1 className="text-3xl font-bold text-gray-900">{nome}</h1>
+
+                                    {/* Só mostra o botão de excluir se o usuário estiver logado */}
+                                    {localStorage.getItem('token') && (
+                                        <button
+                                            onClick={handleExcluirAnuncio}
+                                            className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                                            title="Excluir Anúncio"
+                                        >
+                                            <Trash2 size={22} />
+                                        </button>
+                                    )}
+                                </div>
                                 <p className="text-lg text-gray-500 font-medium mb-6">{racaEspecie}</p>
 
                                 <h2 className="text-xl font-bold text-gray-800 mb-3 border-b pb-2">Detalhes do Ocorrido</h2>
