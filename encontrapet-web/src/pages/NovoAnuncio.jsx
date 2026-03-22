@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { AlertCircle, CheckCircle2, MapPin, AlignLeft, Camera, PawPrint, Tag } from 'lucide-react';
 import api from '../services/api';
 import MapaSelecao from '../components/MapaSelecao';
+import Swal from 'sweetalert2';
 
 export default function NovoAnuncio() {
     const navigate = useNavigate();
@@ -81,7 +82,13 @@ export default function NovoAnuncio() {
 
             await api.post('/anuncios', payload);
 
-            alert('Anúncio publicado com sucesso!');
+            await Swal.fire({
+                title: 'Publicado!',
+                text: 'Seu anúncio já está disponível no Feed para toda a comunidade.',
+                icon: 'success',
+                confirmButtonColor: '#6366f1',
+                customClass: { popup: 'rounded-3xl' }
+            });
             navigate('/feed');
 
         } catch (error) {

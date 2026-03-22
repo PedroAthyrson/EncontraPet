@@ -4,6 +4,7 @@ import { ArrowLeft, MapPin, Calendar, Info, Send, User, Trash2 } from 'lucide-re
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import L from 'leaflet';
 import api from '../services/api';
+import Swal from 'sweetalert2';
 
 // Ícones do mapa
 const redIcon = new L.Icon({
@@ -71,16 +72,42 @@ export default function AnuncioDetalhes() {
     };
 
     const handleExcluirAnuncio = async () => {
-        const confirmacao = window.confirm("Tem certeza que deseja excluir este anúncio? Esta ação não pode ser desfeita.");
+        const result = await Swal.fire({
+            title: 'Tem certeza?',
+            text: "Você não poderá reverter esta ação!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#ef4444',
+            cancelButtonColor: '#6b7280',
+            confirmButtonText: 'Sim, excluir anúncio!',
+            cancelButtonText: 'Cancelar',
+            customClass: {
+                popup: 'rounded-3xl', 
+            }
+        });
 
-        if (confirmacao) {
+        if (result.isConfirmed) {
             try {
                 await api.delete(`/anuncios/${id}`);
-                alert("Anúncio excluído com sucesso!");
+                await Swal.fire({
+                    title: 'Excluído!',
+                    text: 'Seu anúncio foi removido com sucesso.',
+                    icon: 'success',
+                    confirmButtonColor: '#6366f1',
+                    customClass: { popup: 'rounded-3xl' }
+                });
+
                 navigate('/feed');
             } catch (error) {
                 console.error("Erro ao excluir:", error);
-                alert("Erro: Você não tem permissão para excluir este anúncio ou ele não existe mais.");
+
+                Swal.fire({
+                    title: 'Ops!',
+                    text: 'Você não tem permissão para excluir este anúncio.',
+                    icon: 'error',
+                    confirmButtonColor: '#6366f1',
+                    customClass: { popup: 'rounded-3xl' }
+                });
             }
         }
     };

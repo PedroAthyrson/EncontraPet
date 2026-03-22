@@ -1,11 +1,12 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Mail, Lock, UserCircle2 } from 'lucide-react';
-import api from '../services/api'; 
+import api from '../services/api';
+import Swal from 'sweetalert2';
 
 export default function Login() {
     const [credentials, setCredentials] = useState({ email: '', senha: '' });
-    const [erro, setErro] = useState(''); 
+    const [erro, setErro] = useState('');
     const navigate = useNavigate();
 
     const handleChange = (e) => {
@@ -18,17 +19,28 @@ export default function Login() {
 
         try {
             const resposta = await api.post('/auth/login', credentials);
-            
-            const token = resposta.data.token; 
-            
-            localStorage.setItem('token', token);
-            
-            alert('Login realizado com sucesso!');
-            navigate('/feed');
 
+            const token = resposta.data.token;
+
+            localStorage.setItem('token', token);
+            await Swal.fire({
+                title: 'Bem-vindo de volta!',
+                text: 'Preparando o seu Feed...',
+                icon: 'success',
+                showConfirmButton: false,
+                timer: 1500,
+                customClass: { popup: 'rounded-3xl' }
+            });
+            navigate('/feed');
         } catch (error) {
             console.error("Erro no login", error);
-            setErro('E-mail ou senha incorretos. Tente novamente.');
+            Swal.fire({
+                title: 'Acesso Negado',
+                text: 'E-mail ou senha incorretos. Tente novamente.',
+                icon: 'error',
+                confirmButtonColor: '#6366f1',
+                customClass: { popup: 'rounded-3xl' }
+            });
         }
     };
 

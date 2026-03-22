@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { MapContainer, TileLayer, Marker, useMapEvents, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import { Search } from 'lucide-react';
+import Swal from 'sweetalert2';
 
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -53,11 +54,23 @@ export default function MapaSelecao({ onLocationSelect }) {
                 setMapCenter([newPos.lat, newPos.lng]);
                 onLocationSelect(newPos.lat, newPos.lng);
             } else {
-                alert('Endereço não encontrado. Tente colocar a Rua, Número e Cidade (Ex: Avenida Epitácio Pessoa, João Pessoa).');
+                Swal.fire({
+                    title: 'Não encontrado',
+                    text: 'Tente colocar a Rua, Número e Cidade (Ex: Avenida Epitácio Pessoa, João Pessoa).',
+                    icon: 'warning',
+                    confirmButtonColor: '#6366f1',
+                    customClass: { popup: 'rounded-3xl' }
+                });
             }
         } catch (error) {
             console.error("Erro ao buscar endereço:", error);
-            alert('Erro de conexão ao buscar o endereço.');
+            Swal.fire({
+                title: 'Erro de Conexão',
+                text: 'Não foi possível buscar o endereço no momento.',
+                icon: 'error',
+                confirmButtonColor: '#6366f1',
+                customClass: { popup: 'rounded-3xl' }
+            });
         } finally {
             setIsSearching(false);
         }

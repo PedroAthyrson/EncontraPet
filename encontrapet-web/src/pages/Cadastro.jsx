@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { User, Mail, Lock, Phone } from 'lucide-react';
 import api from '../services/api';
+import Swal from 'sweetalert2';
 
 export default function Cadastro() {
     const [formData, setFormData] = useState({ nome: '', email: '', telefone: '', senha: '' });
@@ -18,11 +19,14 @@ export default function Cadastro() {
 
         try {
             await api.post('/usuarios', formData);
-
-            alert('Conta criada com sucesso! Pode agora fazer o login.');
-
+            await Swal.fire({
+                title: 'Conta Criada!',
+                text: 'Seja bem-vindo ao EncontraPet. Faça login para continuar.',
+                icon: 'success',
+                confirmButtonColor: '#6366f1',
+                customClass: { popup: 'rounded-3xl' }
+            });
             navigate('/login');
-
         } catch (error) {
             console.error("Erro no cadastro", error);
             if (error.response && error.response.status === 400) {
