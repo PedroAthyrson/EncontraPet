@@ -62,16 +62,16 @@ export default function Feed() {
                         Encontra<span className="text-indigo-200">Pet</span>
                     </div>
 
-                    {/* Barra de Busca Dinâmica */}
+                    {/* Barra de Busca Atualizada para visibilidade */}
                     <div className="hidden md:flex flex-1 max-w-lg mx-8 relative">
                         <input
                             type="text"
                             value={busca}
                             onChange={(e) => setBusca(e.target.value)}
                             placeholder="Buscar por nome, cidade ou bairro..."
-                            className="w-full pl-4 pr-10 py-2 rounded-full text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-300"
+                            className="w-full pl-4 pr-11 py-2 rounded-full bg-white/10 text-white placeholder:text-white/70 border-2 border-white/30 focus:outline-none focus:border-white focus:ring-2 focus:ring-indigo-300"
                         />
-                        <Search className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+                        <Search className="absolute right-3 top-1/2 transform -translate-y-1/2 text-white/70" size={20} />
                     </div>
 
                     <div className="flex items-center space-x-4">
@@ -92,8 +92,8 @@ export default function Feed() {
                                 key={filtro}
                                 onClick={() => setFiltroAtivo(filtro)}
                                 className={`flex items-center px-4 py-1.5 rounded-full whitespace-nowrap transition-colors ${filtroAtivo === filtro
-                                    ? 'bg-white text-indigo-600 font-bold' // Estilo quando está ativo
-                                    : 'bg-indigo-500 text-white hover:bg-indigo-400' // Estilo inativo
+                                    ? 'bg-white text-indigo-600 font-bold'
+                                    : 'bg-indigo-500 text-white hover:bg-indigo-400'
                                     }`}
                             >
                                 {filtro === 'Todos' && <Filter size={16} className="mr-1" />}

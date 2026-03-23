@@ -1,4 +1,5 @@
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import { useState, useEffect } from 'react';
+import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import L from 'leaflet';
 
 const redIcon = new L.Icon({
@@ -19,16 +20,42 @@ const greenIcon = new L.Icon({
     shadowSize: [41, 41]
 });
 
-export default function MapaFeed({ anuncios }) {
-    const centroPadrao = [-7.11532, -34.86105];
+function MapCenterUpdater({ center }) {
+    const map = useMap();
+    useEffect(() => {
+        if (center) {
+            map.flyTo(center, 12);
+        }
+    }, [center, map]);
+    return null;
+}
+
+export default function MapaFeed({ anuncios }) { 
+    const [centroMapa, setCentroMapa] = useState([-7.11532, -34.86105]);
+    useEffect(() => {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    const { latitude, longitude } = position.coords;
+                    setCentroMapa([latitude, longitude]);
+                },
+                (error) => {
+                    console.error("Erro ao pegar geolocalização:", error);
+                }
+            );
+        }
+    }, []);
 
     return (
         <div className="h-full w-full rounded-2xl overflow-hidden shadow-sm border-2 border-gray-100 z-0 relative">
-            <MapContainer center={centroPadrao} zoom={11} scrollWheelZoom={false} className="h-full w-full absolute inset-0">
+            <MapContainer center={centroMapa} zoom={11} scrollWheelZoom={false} className="h-full w-full absolute inset-0">
                 <TileLayer
                     attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 />
+
+                {/* Componente que move o mapa para o usuário */}
+                <MapCenterUpdater center={centroMapa} />
 
                 {/* Percorre todos os anúncios para renderizar os pinos */}
                 {anuncios.map((ad) => {
