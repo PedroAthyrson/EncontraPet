@@ -31,6 +31,7 @@ public class SecurityConfigurations {
                     req.requestMatchers(HttpMethod.POST, "/usuarios").permitAll();
                     req.requestMatchers(HttpMethod.GET, "/anuncios").permitAll();
                     req.requestMatchers(HttpMethod.GET, "/anuncios/**").permitAll();
+                    req.requestMatchers(HttpMethod.GET, "/uploads/**").permitAll();
                     req.anyRequest().authenticated();
                 })
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)

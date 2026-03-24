@@ -23,6 +23,8 @@ export default function NovoAnuncio() {
         longitude: null
     });
 
+    const [uploading, setUploading] = useState(false);
+
     const [meusPets, setMeusPets] = useState([]);
     const [petSelecionado, setPetSelecionado] = useState('');
     const [precisaCadastrarPet, setPrecisaCadastrarPet] = useState(false);
@@ -49,6 +51,40 @@ export default function NovoAnuncio() {
 
     const handleAnuncioChange = (e) => setAnuncioData({ ...anuncioData, [e.target.name]: e.target.value });
     const handlePetChange = (e) => setPetData({ ...petData, [e.target.name]: e.target.value });
+
+    const handleUploadFoto = async (e, tipo) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        const formData = new FormData();
+        formData.append('file', file);
+
+        setUploading(true);
+        try {
+            const response = await api.post('/upload', formData, {
+                headers: { 'Content-Type': 'multipart/form-data' }
+            });
+
+            const imageUrl = response.data.url;
+            if (tipo === 'PERDIDO') {
+                setPetData({ ...petData, fotoUrl: imageUrl });
+            } else if (tipo === 'ENCONTRADO') {
+                setAnuncioData({ ...anuncioData, animalEncontradoFotoUrl: imageUrl });
+            }
+
+        } catch (error) {
+            console.error("Erro no upload:", error);
+            Swal.fire({
+                title: 'Erro!',
+                text: 'Não foi possível enviar a foto.',
+                icon: 'error',
+                confirmButtonColor: '#6366f1',
+                customClass: { popup: 'rounded-3xl' }
+            });
+        } finally {
+            setUploading(false);
+        }
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -219,10 +255,22 @@ export default function NovoAnuncio() {
                                             <input type="text" name="raca" placeholder="Raça" value={petData.raca} onChange={handlePetChange} className="w-full px-4 py-3 rounded-xl border border-gray-200 outline-none focus:ring-2 focus:ring-indigo-400" />
                                             <input type="text" name="cor" placeholder="Cor predominante" value={petData.cor} onChange={handlePetChange} className="w-full px-4 py-3 rounded-xl border border-gray-200 outline-none focus:ring-2 focus:ring-indigo-400" />
                                         </div>
-                                        <div className="relative">
-                                            <Camera className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
-                                            <input type="url" name="fotoUrl" placeholder="URL da foto do pet (opcional)" value={petData.fotoUrl} onChange={handlePetChange} className="w-full pl-11 pr-4 py-3 rounded-xl border border-gray-200 outline-none focus:ring-2 focus:ring-indigo-400" />
+
+                                        {/* NOVO CAMPO DE FOTO (PERDIDO) */}
+                                        <div className="mt-4">
+                                            <label className="block text-sm font-semibold text-gray-600 mb-1">Foto do Pet</label>
+                                            <input
+                                                type="file"
+                                                accept="image/*"
+                                                onChange={(e) => handleUploadFoto(e, 'PERDIDO')}
+                                                className="w-full px-4 py-3 rounded-xl bg-white border border-gray-200 outline-none focus:ring-2 focus:ring-indigo-400 transition-colors file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-bold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 cursor-pointer"
+                                            />
+                                            {uploading && <p className="text-sm text-indigo-500 mt-2 font-medium animate-pulse">Enviando foto...</p>}
+                                            {petData.fotoUrl && (
+                                                <img src={petData.fotoUrl} alt="Preview do Pet" className="mt-4 h-32 w-32 object-cover rounded-xl shadow-md border-2 border-indigo-100" />
+                                            )}
                                         </div>
+
                                         {meusPets.length > 0 && (
                                             <button type="button" onClick={() => setPrecisaCadastrarPet(false)} className="text-sm text-gray-500 hover:text-gray-700 underline mt-2 block">Cancelar novo pet e escolher da lista</button>
                                         )}
@@ -239,17 +287,29 @@ export default function NovoAnuncio() {
                                     <PawPrint className="absolute left-4 top-4 text-gray-400" size={18} />
                                     <textarea name="animalEncontradoDescricao" required value={anuncioData.animalEncontradoDescricao} onChange={handleAnuncioChange} rows="2" placeholder="Descreva o animal (ex: Gato preto, olhos verdes, assustado...)" className="w-full pl-11 pr-4 py-3 rounded-xl bg-gray-50 border border-gray-200 focus:bg-white focus:ring-2 focus:ring-indigo-400 outline-none transition resize-none"></textarea>
                                 </div>
-                                <div className="relative">
-                                    <Camera className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
-                                    <input type="url" name="animalEncontradoFotoUrl" value={anuncioData.animalEncontradoFotoUrl} onChange={handleAnuncioChange} placeholder="URL da foto que você tirou (opcional)" className="w-full pl-11 pr-4 py-3 rounded-xl bg-gray-50 border border-gray-200 focus:bg-white focus:ring-2 focus:ring-indigo-400 outline-none transition" />
+
+                                {/* NOVO CAMPO DE FOTO (ENCONTRADO) */}
+                                <div className="mt-4">
+                                    <label className="block text-sm font-semibold text-gray-600 mb-1">Foto do Pet Encontrado</label>
+                                    <input
+                                        type="file"
+                                        accept="image/*"
+                                        onChange={(e) => handleUploadFoto(e, 'ENCONTRADO')}
+                                        className="w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-200 outline-none focus:ring-2 focus:ring-indigo-400 transition-colors file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-bold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 cursor-pointer"
+                                    />
+                                    {uploading && <p className="text-sm text-indigo-500 mt-2 font-medium animate-pulse">Enviando foto...</p>}
+                                    {anuncioData.animalEncontradoFotoUrl && (
+                                        <img src={anuncioData.animalEncontradoFotoUrl} alt="Preview do Pet Encontrado" className="mt-4 h-32 w-32 object-cover rounded-xl shadow-md border-2 border-indigo-100" />
+                                    )}
                                 </div>
+
                             </div>
                         )}
 
                         <button
                             type="submit"
-                            disabled={loading}
-                            className={`w-full py-4 rounded-xl font-bold text-white text-lg shadow-lg transition flex items-center justify-center mt-8 ${loading ? 'bg-indigo-300 cursor-not-allowed' : 'bg-indigo-600 hover:bg-indigo-700'}`}
+                            disabled={loading || uploading}
+                            className={`w-full py-4 rounded-xl font-bold text-white text-lg shadow-lg transition flex items-center justify-center mt-8 ${(loading || uploading) ? 'bg-indigo-300 cursor-not-allowed' : 'bg-indigo-600 hover:bg-indigo-700'}`}
                         >
                             {loading ? 'Publicando...' : 'Publicar Anúncio'}
                         </button>
