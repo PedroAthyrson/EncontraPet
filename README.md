@@ -5,11 +5,11 @@
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-14-blue)
 ![Maven](https://img.shields.io/badge/Maven-4.0.0-red)
 
-[cite_start]API RESTful desenvolvida para a plataforma **EncontraPet**, um Produto Mínimo Viável (MVP) com foco em impacto social que conecta donos de animais de estimação a uma comunidade de voluntários para facilitar o reencontro de pets perdidos[cite: 25, 29].
+API RESTful desenvolvida para a plataforma **EncontraPet**, um Produto Mínimo Viável (MVP) com foco em impacto social que conecta donos de animais de estimação a uma comunidade de voluntários para facilitar o reencontro de pets perdidos.
 
 ## Descrição do Projeto
 
-[cite_start]O EncontraPet surge como uma solução para centralizar a base de dados de animais desaparecidos de forma visual e geolocalizada[cite: 28]. A plataforma permite que usuários cadastrem seus pets proativamente e, em caso de desaparecimento, criem anúncios de "Animal Perdido" com a localização exata no mapa. Pessoas que encontram um animal na rua também podem criar anúncios de "Animal Encontrado", promovendo a conexão direta entre quem perdeu e quem encontrou.
+O EncontraPet surge como uma solução para centralizar a base de dados de animais desaparecidos de forma visual e geolocalizada. A plataforma permite que usuários cadastrem seus pets proativamente e, em caso de desaparecimento, criem anúncios de "Animal Perdido" com a localização exata no mapa. Pessoas que encontram um animal na rua também podem criar anúncios de "Animal Encontrado", promovendo a conexão direta entre quem perdeu e quem encontrou.
 
 ## Funcionalidades
 
