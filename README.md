@@ -56,7 +56,7 @@ cd encontrapet-api
 **2. Configure o Banco de Dados (PostgreSQL com Docker):**
 A forma mais fácil de subir o banco de dados é usando o Docker. Execute o comando abaixo no seu terminal:
 ```bash
-docker run --name encontrapet-db -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=sua-senha-aqui -e POSTGRES_DB=encontrapet -p 5432:5432 -d postgres
+docker run --name encontrapet-db -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=sua-senha-aqui -e POSTGRES_DB=encontrapet -p 5433:5432 -d postgres
 ```
 **Atenção:** Lembre-se de substituir `sua-senha-aqui` pela senha que você deseja usar.
 

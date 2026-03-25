@@ -10,7 +10,9 @@ public record AnuncioCadastroDTO(
         @NotNull StatusAnuncio status,
         @NotBlank String cidade,
         @NotBlank String estado,
-
+        
+        Double latitude,
+        Double longitude,
         Long idAnimal,
         String animalEncontradoDescricao,
         String animalEncontradoFotoUrl
